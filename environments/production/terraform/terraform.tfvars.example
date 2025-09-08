@@ -1,0 +1,12 @@
+# Copie este arquivo para terraform.tfvars e preencha com seus valores reais
+
+# OBRIGATÓRIO: OCID do seu compartimento OCI
+compartment_id = "ocid1.compartment.oc1..aaaaaaaa..."
+
+# OBRIGATÓRIO: Sua chave SSH pública
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC... seu-email@exemplo.com"
+
+# Configurações opcionais (valores padrão já são adequados)
+region             = "us-ashburn-1"
+cluster_name       = "homelab"
+kubernetes_version = "v1.33.1"

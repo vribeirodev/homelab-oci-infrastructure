@@ -1,0 +1,99 @@
+name: 'Documentation Sync'
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/**/*.tf'
+      - 'environments/**/*.tf'
+      - 'modules/**/README.md'
+  pull_request:
+    paths:
+      - 'modules/**/*.tf'
+      - 'environments/**/*.tf'
+
+env:
+  TERRAFORM_DOCS_VERSION: 'v0.17.0'
+
+jobs:
+  docs:
+    name: 'Generate Documentation'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup terraform-docs
+        run: |
+          curl -sSLo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/${{ env.TERRAFORM_DOCS_VERSION }}/terraform-docs-${{ env.TERRAFORM_DOCS_VERSION }}-linux-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          sudo mv terraform-docs /usr/local/bin/
+          terraform-docs --version
+
+      - name: Generate docs for networking module
+        run: |
+          cd modules/networking
+          terraform-docs markdown table --output-file README.md .
+
+      - name: Generate docs for oke-cluster module
+        run: |
+          cd modules/oke-cluster
+          terraform-docs markdown table --output-file README.md .
+
+      - name: Update main README with module docs
+        run: |
+          # Gerar arquivo temporário com docs dos módulos
+          echo "## Módulos" > temp_modules.md
+          echo "" >> temp_modules.md
+          
+          echo "### Networking Module" >> temp_modules.md
+          echo "" >> temp_modules.md
+          echo "\`\`\`hcl" >> temp_modules.md
+          echo "module \"networking\" {" >> temp_modules.md
+          echo "  source = \"../../../modules/networking\"" >> temp_modules.md
+          echo "" >> temp_modules.md
+          terraform-docs markdown table --output-mode inject modules/networking | grep -A 100 "## Inputs" | head -n 20 >> temp_modules.md
+          echo "\`\`\`" >> temp_modules.md
+          echo "" >> temp_modules.md
+          
+          echo "### OKE Cluster Module" >> temp_modules.md
+          echo "" >> temp_modules.md
+          echo "\`\`\`hcl" >> temp_modules.md
+          echo "module \"oke_cluster\" {" >> temp_modules.md
+          echo "  source = \"../../../modules/oke-cluster\"" >> temp_modules.md
+          echo "" >> temp_modules.md
+          terraform-docs markdown table --output-mode inject modules/oke-cluster | grep -A 100 "## Inputs" | head -n 20 >> temp_modules.md
+          echo "\`\`\`" >> temp_modules.md
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push if changed
+        if: steps.changes.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add modules/*/README.md
+          git commit -m "docs: auto-update module documentation [skip ci]" || exit 0
+          git push
+
+      - name: Comment on PR if docs changed
+        if: steps.changes.outputs.changed == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '📚 **Documentation Update Required**\n\nThis PR contains changes to Terraform modules that require documentation updates. The documentation has been automatically generated and needs to be committed.\n\nPlease run:\n```bash\nterraform-docs markdown table --output-file README.md modules/networking/\nterraform-docs markdown table --output-file README.md modules/oke-cluster/\ngit add modules/*/README.md\ngit commit -m "docs: update module documentation"\n```'
+            });
