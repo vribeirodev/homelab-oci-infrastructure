@@ -105,11 +105,6 @@ resource "oci_containerengine_node_pool" "oke_node_pool" {
   }
 }
 
-data "oci_containerengine_node_pool_option" "oke_node_pool_option_image" {
-  node_pool_option_id = "all"
-  compartment_id      = var.compartment_id
-}
-
 locals {
   # Filtrar imagens por arquitetura
   arm_images = [
