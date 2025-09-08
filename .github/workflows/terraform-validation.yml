@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        environment: [production, staging]
+        environment: [production]
 
     defaults:
       run:
