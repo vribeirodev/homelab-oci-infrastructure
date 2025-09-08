@@ -13,11 +13,6 @@ provider "oci" {
   region = var.region
 }
 
-# Data source para availability domains
-data "oci_identity_availability_domains" "ads" {
-  compartment_id = var.compartment_id
-}
-
 # Módulo de networking
 module "networking" {
   source = "../../../modules/networking"
