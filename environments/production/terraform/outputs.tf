@@ -26,8 +26,8 @@ output "quick_access" {
   description = "Comandos úteis para acesso rápido"
   value = {
     configure_kubectl = module.oke_cluster.kubeconfig_command
-    check_nodes      = "kubectl get nodes"
-    check_pods       = "kubectl get pods -A"
+    check_nodes       = "kubectl get nodes"
+    check_pods        = "kubectl get pods -A"
   }
 }
 
@@ -37,9 +37,9 @@ output "environment_summary" {
     environment        = "production"
     cluster_name       = module.oke_cluster.cluster_name
     kubernetes_version = module.oke_cluster.kubernetes_version
-    region            = var.region
-    worker_nodes      = 2
-    total_cpu         = "4 OCPUs"
-    total_memory      = "24 GB"
+    region             = var.region
+    worker_nodes       = 2
+    total_cpu          = "4 OCPUs"
+    total_memory       = "24 GB"
   }
 }
