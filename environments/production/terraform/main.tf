@@ -24,7 +24,6 @@ module "networking" {
 
   compartment_id      = var.compartment_id
   environment         = "production"
-  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
 
   # Configuração de rede para produção
   vcn_cidr            = "10.0.0.0/16"
