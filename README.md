@@ -5,7 +5,6 @@
 [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
 
 [![Terraform Validation](https://github.com/vribeirodev/homelab-oci-infrastructure/workflows/Terraform%20Validation/badge.svg)](https://github.com/vribeirodev/homelab-oci-infrastructure/actions/workflows/terraform-validation.yml)
-[![Terraform Plan](https://github.com/vribeirodev/homelab-oci-infrastructure/workflows/Terraform%20Plan/badge.svg)](https://github.com/vribeirodev/homelab-oci-infrastructure/actions/workflows/terraform-plan.yml)
 [![Documentation](https://github.com/vribeirodev/homelab-oci-infrastructure/workflows/Documentation%20Sync/badge.svg)](https://github.com/vribeirodev/homelab-oci-infrastructure/actions/workflows/documentation.yml)
 
 Infraestrutura como código para Oracle Cloud Infrastructure (OCI) usando Terraform, para criar um cluster Kubernetes (OKE) gratuito para projetos pessoais, portfólio e uso pela comunidade.
